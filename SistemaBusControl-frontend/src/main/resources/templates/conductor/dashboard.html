@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{compartido/layout :: master(~{::#pagina-contenido}, ~{::title})}">
+<head>
+    <title>Sistema Bus Control - Panel del conductor</title>
+</head>
+<body>
+<div id="pagina-contenido" class="page-shell">
+    <p class="page-eyebrow small fw-bold text-uppercase mb-2">Operación del día</p>
+    <h1 class="h3 fw-bold mb-1">Hola, <span th:text="${nombreConductor}">Conductor</span></h1>
+    <p class="text-secondary mb-4">Aquí encontrarás el servicio que tienes asignado actualmente.</p>
+
+    <div th:if="${exito}" class="alert alert-success" role="alert" th:text="${exito}"></div>
+    <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+
+    <section th:if="${sinAsignacion}" class="empty-state bg-white p-5 text-center">
+        <span class="metric-icon mx-auto mb-3"><i class="bi bi-calendar-x fs-3"></i></span>
+        <h2 class="h4 fw-bold">No tienes un servicio asignado actualmente.</h2>
+        <p class="text-secondary mb-4">Cuando se registre una asignación activa para hoy, aparecerá en este panel.</p>
+        <a class="btn btn-outline-primary" th:href="@{/conductor/historial}">
+            <i class="bi bi-clock-history me-1"></i> Ver historial
+        </a>
+    </section>
+
+    <section th:if="${asignacion != null}">
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <article class="card-soft h-100 p-4">
+                    <span class="metric-icon mb-3"><i class="bi bi-bus-front fs-4"></i></span>
+                    <small class="text-secondary d-block">Vehículo asignado</small>
+                    <h2 class="h5 fw-bold mb-1"
+                        th:text="${asignacion.vehiculo.marca + ' ' + asignacion.vehiculo.modelo}">Marca y modelo</h2>
+                    <span class="text-secondary">Unidad operativa</span>
+                </article>
+            </div>
+
+            <div class="col-md-4">
+                <article class="card-soft h-100 p-4">
+                    <span class="metric-icon mb-3"><i class="bi bi-credit-card-2-front fs-4"></i></span>
+                    <small class="text-secondary d-block">Placa</small>
+                    <h2 class="h5 fw-bold mb-1" th:text="${asignacion.vehiculo.placa}">ABC-123</h2>
+                    <span class="text-secondary" th:text="${asignacion.vehiculo.estado}">ACTIVO</span>
+                </article>
+            </div>
+
+            <div class="col-md-4">
+                <article class="card-soft h-100 p-4">
+                    <span class="metric-icon mb-3"><i class="bi bi-map fs-4"></i></span>
+                    <small class="text-secondary d-block">Ruta asignada</small>
+                    <h2 class="h5 fw-bold mb-1" th:text="${asignacion.ruta.nombre}">Ruta</h2>
+                    <span class="status-pill bg-primary-subtle text-primary" th:text="${asignacion.ruta.tipo}">IDA</span>
+                </article>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-lg-7">
+                <article class="card-soft h-100 p-4 p-md-5">
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <span class="metric-icon"><i class="bi bi-signpost-2 fs-4"></i></span>
+                        <div>
+                            <small class="text-secondary">Trayecto programado</small>
+                            <h2 class="h5 fw-bold mb-0">Origen y destino</h2>
+                        </div>
+                    </div>
+
+                    <dl class="row mb-0 g-3">
+                        <dt class="col-sm-4 text-secondary fw-normal">Tipo de ruta</dt>
+                        <dd class="col-sm-8 fw-semibold mb-0" th:text="${asignacion.ruta.tipo}">IDA</dd>
+
+                        <dt class="col-sm-4 text-secondary fw-normal">Estación origen</dt>
+                        <dd class="col-sm-8 fw-semibold mb-0"
+                            th:text="${asignacion.ruta.estacionOrigenNombre != null ? asignacion.ruta.estacionOrigenNombre : 'No definida'}">
+                            Estación origen
+                        </dd>
+
+                        <dt class="col-sm-4 text-secondary fw-normal">Estación destino</dt>
+                        <dd class="col-sm-8 fw-semibold mb-0"
+                            th:text="${asignacion.ruta.estacionDestinoNombre != null ? asignacion.ruta.estacionDestinoNombre : 'No definida'}">
+                            Estación destino
+                        </dd>
+                    </dl>
+                </article>
+            </div>
+
+            <div class="col-lg-5">
+                <article class="card-soft h-100 p-4 p-md-5">
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <span class="metric-icon"><i class="bi bi-calendar3 fs-4"></i></span>
+                        <div>
+                            <small class="text-secondary">Asignación</small>
+                            <h2 class="h5 fw-bold mb-0">Programación</h2>
+                        </div>
+                    </div>
+
+                    <dl class="row mb-0 g-3">
+                        <dt class="col-6 text-secondary fw-normal">Fecha</dt>
+                        <dd class="col-6 text-end fw-semibold mb-0"
+                            th:text="${#temporals.format(asignacion.fecha, 'dd/MM/yyyy')}">25/06/2026</dd>
+
+                        <dt class="col-6 text-secondary fw-normal">Hora inicio</dt>
+                        <dd class="col-6 text-end fw-semibold mb-0" th:text="${asignacion.horaInicio}">08:00</dd>
+
+                        <dt class="col-6 text-secondary fw-normal">Hora fin</dt>
+                        <dd class="col-6 text-end fw-semibold mb-0" th:text="${asignacion.horaFin}">17:00</dd>
+
+                        <dt class="col-6 text-secondary fw-normal">Estado</dt>
+                        <dd class="col-6 text-end mb-0">
+                            <span class="status-pill bg-success-subtle text-success" th:text="${asignacion.estado}">ACTIVO</span>
+                        </dd>
+                    </dl>
+                </article>
+            </div>
+        </div>
+
+        <article class="card-soft p-4 p-md-5">
+            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-4">
+                <div>
+                    <small class="text-secondary d-block mb-1">Estado del recorrido</small>
+                    <div th:if="${recorridoFinalizado}">
+                        <span class="status-pill bg-secondary-subtle text-secondary">FINALIZADO</span>
+                        <p class="text-secondary mt-2 mb-0">
+                            El recorrido de hoy ya fue finalizado.
+                            <span th:if="${ultimoRecorrido != null and ultimoRecorrido.horaFin != null}">
+                                Hora de cierre: <strong th:text="${ultimoRecorrido.horaFin}">10:00</strong>.
+                            </span>
+                        </p>
+                    </div>
+                    <div th:if="${recorridoActivo != null}">
+                        <span class="status-pill bg-success-subtle text-success" th:text="${recorridoActivo.estado}">EN_CURSO</span>
+                        <p class="text-secondary mt-2 mb-0">
+                            Recorrido <strong th:text="${'#' + recorridoActivo.id}">#1</strong> iniciado a las
+                            <strong th:text="${recorridoActivo.horaInicio}">08:00</strong>.
+                        </p>
+                    </div>
+                    <div th:if="${recorridoNoIniciado}">
+                        <span class="status-pill bg-secondary-subtle text-secondary">NO INICIADO</span>
+                        <p class="text-secondary mt-2 mb-0">El servicio está listo para comenzar.</p>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2">
+                    <a class="btn btn-outline-primary" th:href="@{/conductor/mi-ruta}">
+                        <i class="bi bi-map me-1"></i> Ver mi ruta
+                    </a>
+
+                    <form th:if="${recorridoNoIniciado}"
+                          th:action="@{/conductor/recorrido/iniciar}"
+                          method="post"
+                          class="m-0">
+                        <input type="hidden" name="asignacionID" th:value="${asignacion.id}">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="bi bi-play-fill me-1"></i> Iniciar recorrido
+                        </button>
+                    </form>
+
+                    <a th:if="${recorridoActivo != null}"
+                       class="btn btn-primary"
+                       th:href="@{/conductor/recorrido}">
+                        <i class="bi bi-arrow-right-circle me-1"></i> Continuar recorrido
+                    </a>
+
+                    <a class="btn btn-light border" th:href="@{/conductor/historial}">
+                        <i class="bi bi-clock-history me-1"></i> Ver historial
+                    </a>
+                </div>
+            </div>
+        </article>
+    </section>
+</div>
+</body>
+</html>

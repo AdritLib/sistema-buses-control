@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{compartido/layout :: master(~{::#pagina-contenido}, ~{::title})}">
+<head>
+	<title>Sistema Bus Control - Formulario Mantenimiento</title>
+</head>
+<body>
+	<div id="pagina-contenido">
+		<p th:if="${error != null}" class="alert alert-danger" th:text="${error}"></p>
+				
+		<div class="mb-4">
+			<h1 class="h3 fw-bold" th:text="${modo=='crear'}?'Nuevo mantenimiento':'Editar mantenimiento'"></h1>
+		</div>
+		<div class="card shadow-sm border-0">
+			<div class="card-body">
+
+				<form th:action="@{/supervisor/vehiculos-mantenimiento/guardar(id=${mantenimientoId})}"
+					th:object="${mantenimientoForm}" method="post">
+
+					<div class="mb-3">
+						<label class="form-label">Vehículo</label>
+
+						<select class="form-select" th:field="*{vehiculoID}" required>
+							<option value="">Seleccione un vehiculo</option>
+							<option th:each="v : ${vehiculos}" th:value="${v.id}" th:text="${v.placa}">
+							</option>
+						</select>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label">Fecha inicio</label>
+						<input type="date" class="form-control" th:field="*{fechaInicio}" required>
+					</div>
+					
+					<div class="mb-3">
+						<label class="form-label">Fecha fin</label>
+						<input type="date" class="form-control" th:field="*{fechaFin}" required>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label">Motivo</label>
+						<textarea class="form-control" rows="4" th:field="*{descripcion}" placeholder="Ingrese el motivo del mantenimiento" required></textarea>
+					</div>
+
+					<input th:if="${modo == 'crear'}" type="hidden" th:field="*{estado}" th:value="'ACTIVO'"/>
+					<div th:if="${modo == 'editar'}" class="mb-3">
+						<label class="form-label">Estado</label>
+						<select class="form-select" th:field="*{estado}" required>
+							<option value="">Seleccione</option>
+							<option selected value="ACTIVO">ACTIVO</option>
+							<option value="MANTENIMIENTO">MANTENIMIENTO</option>
+							<option value="INACTIVO">INACTIVO</option>
+						</select>
+					</div>
+
+					<button type="submit" class="btn btn-primary">Guardar</button>
+					<a th:href="@{/supervisor/vehiculos-mantenimiento}" class="btn btn-secondary">Cancelar</a>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{compartido/layout :: master(~{::#pagina-contenido}, ~{::title})}">
+<head>
+    <title>Sistema Bus Control - Historial conductor</title>
+</head>
+<body>
+<div id="pagina-contenido" class="page-shell">
+    <p class="page-eyebrow small fw-bold text-uppercase mb-2">Registro personal</p>
+    <h1 class="h3 fw-bold mb-1">Historial de recorridos</h1>
+    <p class="text-secondary mb-4">Tus operaciones más recientes.</p>
+
+    <div th:if="${exito}" class="alert alert-success" th:text="${exito}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <div class="card-soft overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                <tr>
+                    <th class="ps-4">Recorrido</th>
+                    <th>Fecha</th>
+                    <th>Inicio</th>
+                    <th>Fin</th>
+                    <th>Estado</th>
+                    <th class="text-end pe-4">Detalle</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(recorridos)}">
+                    <td colspan="6" class="text-center text-secondary py-5">
+                        Todavía no tienes recorridos registrados.
+                    </td>
+                </tr>
+                <tr th:each="recorrido : ${recorridos}">
+                    <td class="ps-4 fw-bold" th:text="${'#' + recorrido.id}">#1</td>
+                    <td th:text="${#temporals.format(recorrido.fecha, 'dd/MM/yyyy')}">Fecha</td>
+                    <td th:text="${recorrido.horaInicio != null ? recorrido.horaInicio : '-'}">08:00</td>
+                    <td th:text="${recorrido.horaFin != null ? recorrido.horaFin : 'En curso'}">Fin</td>
+                    <td>
+                        <span class="status-pill"
+                              th:classappend="${recorrido.estado == 'EN_CURSO'} ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary'"
+                              th:text="${recorrido.estado != null ? recorrido.estado : 'SIN_ESTADO'}">Estado</span>
+                    </td>
+                    <td class="text-end pe-4">
+                        <a class="btn btn-sm btn-outline-primary"
+                           th:href="@{/conductor/historial/{id}(id=${recorrido.id})}">
+                            <i class="bi bi-eye me-1"></i> Ver detalle
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <nav class="d-flex justify-content-between align-items-center mt-4" aria-label="Paginación">
+        <a class="btn btn-light border"
+           th:classappend="${paginaActual == 0} ? 'disabled'"
+           th:href="@{/conductor/historial(pagina=${paginaActual > 0 ? paginaActual - 1 : 0})}">
+            <i class="bi bi-chevron-left"></i> Anterior
+        </a>
+        <span class="text-secondary small">Página <strong th:text="${paginaActual + 1}">1</strong></span>
+        <a class="btn btn-light border"
+           th:classappend="${#lists.size(recorridos) < 10} ? 'disabled'"
+           th:href="@{/conductor/historial(pagina=${paginaActual + 1})}">
+            Siguiente <i class="bi bi-chevron-right"></i>
+        </a>
+    </nav>
+</div>
+</body>
+</html>

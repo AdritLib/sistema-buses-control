@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{compartido/layout :: master(~{::#pagina-contenido}, ~{::title})}">
+
+<head>
+	<title>Sistema Bus Control - Asignaciones</title>
+</head>
+
+<body>
+<div id="pagina-contenido">
+	<div class="mb-4">
+		<h1 class="h3 fw-bold">Asignaciones</h1>
+		<p class="text-muted">Reportes de asignaciones.</p>
+	</div>
+	
+	<p th:if="${error != null}" class="alert alert-danger" th:text="${error}"></p>
+
+	<a th:href="@{/supervisor/asignaciones/form}" class="btn btn-primary mb-3">
+		Nueva asignación
+	</a>
+
+	<div class="card border-0 shadow-sm">
+		<div class="card-body p-0">
+			<table class="table table-hover mb-0">
+				<thead class="table-light">
+					<tr>
+						<th>ID</th>
+						<th>Conductor</th>
+						<th>Ruta</th>
+						<th>Vehículo</th>
+						<th>Hora Inicio</th>
+						<th>Hora Fin</th>
+						<th>Fecha</th>
+						<th>Acciones</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:if="${#lists.isEmpty(asignaciones)}">
+						<td colspan="8" class="text-center py-4">
+							No hay asignaciones registradas
+						</td>
+					</tr>
+					<tr th:each="a : ${asignaciones}">
+						<td th:text="${a.id}"></td>
+						<td th:text="${a.conductorNombre}"></td>
+						<td th:text="${a.rutaNombre}"></td>
+						<td th:text="${a.vehiculoPlaca}"></td>
+						<td th:text="${a.horaInicio}"></td>
+						<td th:text="${a.horaFin}"></td>
+						<td th:text="${#temporals.format(a.fecha, 'dd/MM/yyyy')}"></td>
+
+						<td>
+							<a th:href="@{/supervisor/asignaciones/form(id=${a.id})}"
+								class="btn btn-warning btn-sm">Editar</a>
+
+							<form th:action="@{/supervisor/asignaciones/eliminar/{id}(id=${a.id})}" method="post" style="display:inline;">
+								<button type="submit" class="btn btn-danger btn-sm"
+									onclick="return confirm('¿Está seguro de eliminar esta asignación?')">
+									<i class="bi bi-trash"></i>
+								</button>
+							</form>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

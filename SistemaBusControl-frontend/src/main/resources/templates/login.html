@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema Bus Control - Iniciar Sesión</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+	<link th:href="@{/css/app.css}" rel="stylesheet">
+</head>
+<body class="login-page">
+    <main class="login-shell">
+        <section class="login-brand" aria-label="Presentación de BusControl">
+            <div class="d-flex align-items-center gap-3">
+                <span class="brand-mark"><i class="bi bi-bus-front-fill fs-3"></i></span>
+                <span class="fs-4 fw-bold sidebar-brand">Sistema Bus Control</span>
+            </div>
+            <div class="login-brand-copy">
+                <p class="small fw-bold text-uppercase mb-3">Operación de transporte</p>
+                <h1 class="display-6 fw-bold mb-3">Tu red de buses, bajo control.</h1>
+                <p class="mb-0">Administra flota, personal, paraderos y estaciones desde un único panel operativo.</p>
+            </div>
+            <small class="text-white-50">Acceso exclusivo para personal autorizado</small>
+        </section>
+
+        <section class="login-form-panel">
+            <p class="eyebrow small fw-bold text-uppercase mb-2">Bienvenido</p>
+            <h2 class="h3 fw-bold mb-2">Inicia sesión</h2>
+            <p class="text-secondary mb-4">Ingresa tus credenciales corporativas para continuar.</p>
+
+            <div th:if="${error}" class="alert alert-danger border-0 rounded-3 d-flex align-items-center" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+                <span th:text="${error}">No fue posible iniciar sesión.</span>
+            </div>
+
+            <form th:action="@{/login}" th:object="${loginData}" method="post">
+                <div class="mb-3">
+                    <label for="correo" class="form-label fw-semibold">Correo electrónico</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-envelope text-secondary"></i></span>
+                        <input type="email" id="correo" th:field="*{correo}" class="form-control border-start-0 py-2" placeholder="nombre@empresa.com" required autocomplete="email">
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label for="password" class="form-label fw-semibold">Contraseña</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-lock text-secondary"></i></span>
+                        <input type="password" id="clave" th:field="*{clave}" class="form-control border-start-0 py-2" placeholder="Tu contraseña" required autocomplete="current-password">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 fw-bold py-2 rounded-3">
+                    Iniciar sesión <i class="bi bi-arrow-right ms-2"></i>
+                </button>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

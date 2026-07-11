@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{compartido/layout :: master(~{::#pagina-contenido}, ~{::title})}">
+<head>
+    <title>Sistema Bus Control - Ficha Técnica</title>
+</head>
+<body>
+
+    <div id="pagina-contenido">
+        <div class="mb-4">
+            <h1 class="h3 fw-bold text-dark" th:text="${esEdicion} ? 'Modificar Ficha del Vehículo' : 'Registrar Nuevo Vehículo'">Título</h1>
+            <p class="text-muted" th:text="${esEdicion} ? 'Edita los parámetros técnicos de la unidad seleccionada.' : 'Completa los campos para dar de alta la unidad en la flota central.'">Descripción</p>
+        </div>
+
+        <div th:if="${error}" class="alert alert-danger card-custom border-0 mb-4" th:text="${error}"></div>
+
+        <div class="card card-custom border-0 p-4 col-lg-9">
+            <form th:action="${esEdicion} ? @{/admin/vehiculos/actualizar/{id}(id=${busId})} : @{/admin/vehiculos/guardar}" 
+                  th:object="${vehiculoForm}" method="post">
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="placa" class="form-label fw-semibold text-secondary">Número de Placa</label>
+                        <input type="text" id="placa" th:field="*{placa}" maxlength="7" class="form-control px-3 py-2 text-uppercase" placeholder="ABC-123" required th:readonly="${esEdicion}" style="border-radius: 8px;">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="marca" class="form-label fw-semibold text-secondary">Marca</label>
+                        <input type="text" id="marca" th:field="*{marca}" class="form-control px-3 py-2" placeholder="Mercedes-Benz / Scania" required style="border-radius: 8px;">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="modelo" class="form-label fw-semibold text-secondary">Modelo</label>
+                        <input type="text" id="modelo" th:field="*{modelo}" class="form-control px-3 py-2" placeholder="O500 RS / Irizar i6" required style="border-radius: 8px;">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="year" class="form-label fw-semibold text-secondary">Año de Fabricación</label>
+                        <input type="number" id="year" th:field="*{year}" class="form-control px-3 py-2" placeholder="2025" required style="border-radius: 8px;">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="numAsientos" class="form-label fw-semibold text-secondary">Capacidad (Nº Asientos)</label>
+                        <input type="number" id="numAsientos" th:field="*{numAsientos}" class="form-control px-3 py-2" placeholder="45" required style="border-radius: 8px;">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="estado" class="form-label fw-semibold text-secondary">Estado Operativo</label>
+                        <select id="estado" th:field="*{estado}" class="form-select px-3 py-2" style="border-radius: 8px;">
+                            <option value="DISPONIBLE">DISPONIBLE</option>
+                            <option value="MANTENIMIENTO">MANTENIMIENTO</option>
+                            <option value="INACTIVO">INACTIVO</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <a th:href="@{/admin/vehiculos}" class="btn btn-light border px-4 fw-semibold" style="border-radius: 8px;">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-primary px-4 fw-bold" style="border-radius: 8px;">
+                        <i class="bi bi-save me-1"></i> 
+                        <span th:text="${esEdicion} ? 'Guardar Cambios' : 'Registrar Vehículo'">Acción</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>

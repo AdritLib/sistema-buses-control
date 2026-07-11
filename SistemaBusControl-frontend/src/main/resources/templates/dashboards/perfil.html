@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{compartido/layout :: master(~{::#pagina-contenido}, ~{::title})}">
+<head>
+    <title>Sistema Bus Control - Registrar Personal</title>
+</head>
+<body>
+    <div id="pagina-contenido">
+        
+        <div class="d-flex align-items-center mb-4">
+            <a th:href="@{/dashboard/principal}" class="btn btn-light border text-secondary me-3" style="border-radius: 8px;">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+            <div>
+                <h1 class="h3 fw-bold mb-0">Tu Perfil</h1>
+                <p class="text-muted mb-0">Completa los datos corporativos para dar acceso al sistema.</p>
+            </div>
+        </div>
+
+        <div th:if="${error}" class="alert alert-danger card-custom border-0 mb-4 fw-semibold shadow-sm" th:text="${error}" style="border-radius: 8px;"></div>
+
+        <div class="card card-custom border-0 shadow-sm" style="border-radius: 12px; max-width: 900px;">
+            <div class="card-body p-4 p-md-5">
+                <form th:object="${usuarioForm}">
+                    
+                    <h5 class="fw-bold mb-4 text-primary"><i class="bi bi-person-vcard me-2"></i>Datos Personales</h5>
+
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold text-secondary">Nombre Completo</label>
+                            <input type="text" class="form-control bg-light" th:field="*{nombre}" disabled>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold text-secondary">Tipo de Doc.</label>
+                            <select class="form-select bg-light" th:field="*{tipoDocumento}" id="tipoDocumento" disabled>
+                                <option value="" disabled selected>Seleccione...</option>
+                                <option value="DNI">DNI</option>
+                                <option value="CARNET_EXTRANJERO">Carnet de Extranjería</option>
+                                <option value="PASAPORTE">Pasaporte</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold text-secondary">Número de Doc.</label>
+                            <input type="text" class="form-control bg-light" th:field="*{numDocumento}" id="numDocumento" disabled>
+                            <div class="form-text text-muted" id="docHelp" style="font-size: 0.8rem;">Seleccione un tipo de documento.</div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold text-secondary">Teléfono</label>
+                            <input type="text" class="form-control bg-light" th:field="*{telefono}" id="telefono" disabled>
+                        </div>
+                    </div>
+
+                    <hr class="text-muted mb-4 opacity-25">
+                    <h5 class="fw-bold mb-4 text-primary"><i class="bi bi-shield-lock me-2"></i>Credenciales de Acceso</h5>
+
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-secondary">Correo Electrónico</label>
+                            <input type="email" class="form-control bg-light" th:field="*{correo}" disabled>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold text-secondary">Cargo / Rol en el Sistema</label>
+                            <select class="form-select bg-light form-control-lg" th:field="*{rol}" disabled>
+                                <option value="" disabled selected>Seleccione el rol de operaciones...</option>
+                                <option value="ADMIN">Administrador General</option>
+                                <option value="SUPERVISOR">Supervisor de Estación</option>
+                                <option value="CONDUCTOR">Conductor de Flota</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const tipoDoc = document.getElementById('tipoDocumento');
+                const numDoc = document.getElementById('numDocumento');
+                const telefono = document.getElementById('telefono');
+                const docHelp = document.getElementById('docHelp');
+
+                function aplicarReglasDocumento() {
+                    const tipo = tipoDoc.value;
+                    
+                    if (tipo === 'DNI') {
+                        numDoc.setAttribute('maxlength', '8');
+                        numDoc.setAttribute('minlength', '8');
+                        numDoc.setAttribute('pattern', '[0-9]{8}');
+                        numDoc.setAttribute('title', 'El DNI debe tener exactamente 8 números.');
+                        docHelp.textContent = "Exactamente 8 dígitos numéricos.";
+                    } else if (tipo === 'CARNET_EXTRANJERO') {
+                        numDoc.setAttribute('maxlength', '12');
+                        numDoc.setAttribute('minlength', '9');
+                        numDoc.setAttribute('pattern', '[A-Za-z0-9]{9,12}');
+                        numDoc.setAttribute('title', 'El CE debe tener entre 9 y 12 caracteres (Letras y Números).');
+                        docHelp.textContent = "Entre 9 y 12 caracteres alfanuméricos.";
+                    } else if (tipo === 'PASAPORTE') {
+                        numDoc.setAttribute('maxlength', '12');
+                        numDoc.setAttribute('minlength', '6');
+                        numDoc.setAttribute('pattern', '[A-Za-z0-9]{6,12}'); 
+                        numDoc.setAttribute('title', 'El Pasaporte debe tener entre 6 y 12 caracteres (Letras y Números).');
+                        docHelp.textContent = "Entre 6 y 12 caracteres alfanuméricos.";
+                    }
+                }
+
+                tipoDoc.addEventListener('change', function() {
+                    numDoc.value = ''; 
+                    aplicarReglasDocumento();
+                });
+
+                numDoc.addEventListener('input', function (e) {
+                    if (tipoDoc.value === 'DNI') {
+                        this.value = this.value.replace(/[^0-9]/g, '');
+                    } else if (tipoDoc.value === 'CARNET_EXTRANJERO' || tipoDoc.value === 'PASAPORTE') {
+                        this.value = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                    }
+                });
+
+                telefono.setAttribute('maxlength', '9');
+                telefono.setAttribute('minlength', '9');
+                telefono.setAttribute('pattern', '9[0-9]{8}');
+                telefono.setAttribute('title', 'El teléfono debe empezar con 9 y tener exactamente 9 dígitos.');
+
+                telefono.addEventListener('input', function (e) {
+                    let valor = this.value.replace(/[^0-9]/g, '');
+                    
+                    if (valor.length > 0 && valor.charAt(0) !== '9') {
+                        valor = ''; 
+                    }
+                    
+                    this.value = valor.substring(0, 9);
+                });
+
+                if(tipoDoc.value) aplicarReglasDocumento();
+            });
+        </script>
+    </div>
+</body>
+</html>

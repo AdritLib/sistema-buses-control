@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{compartido/layout :: master(~{::#pagina-contenido}, ~{::title})}">
+<head>
+    <title>Sistema Bus Control - Recorrido</title>
+</head>
+<body>
+<div id="pagina-contenido" class="page-shell">
+    <p class="page-eyebrow small fw-bold text-uppercase mb-2">Control operativo</p>
+    <h1 class="h3 fw-bold mb-1">Mi recorrido</h1>
+    <p class="text-secondary mb-4">Inicia, registra llegadas y finaliza la jornada.</p>
+
+    <div th:if="${exito}" class="alert alert-success" th:text="${exito}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <section th:if="${asignacion != null and recorridoNoIniciado}" class="card-soft p-4 p-md-5 text-center">
+        <span class="metric-icon mx-auto mb-3"><i class="bi bi-play-fill fs-3"></i></span>
+        <h2 class="h4 fw-bold">Todo listo para comenzar</h2>
+        <p class="text-secondary">
+            Ruta <strong th:text="${asignacion.ruta.nombre}">Ruta</strong> ·
+            Vehículo <strong th:text="${asignacion.vehiculo.placa}">Placa</strong>
+        </p>
+        <form th:action="@{/conductor/recorrido/iniciar}" method="post">
+            <input type="hidden" name="asignacionID" th:value="${asignacion.id}">
+            <button class="btn btn-primary btn-lg fw-semibold" type="submit">
+                <i class="bi bi-play-fill me-1"></i> Iniciar recorrido
+            </button>
+        </form>
+    </section>
+
+    <section th:if="${recorridoFinalizado}" class="card-soft p-4 p-md-5 text-center">
+        <span class="metric-icon mx-auto mb-3"><i class="bi bi-check-circle fs-3"></i></span>
+        <h2 class="h4 fw-bold">Este recorrido ya fue finalizado.</h2>
+        <p class="text-secondary mb-4">Puedes verlo en el historial.</p>
+        <a class="btn btn-primary" th:href="@{/conductor/historial}">
+            <i class="bi bi-clock-history me-1"></i> Ver historial
+        </a>
+    </section>
+
+    <section th:if="${recorridoActivo != null}">
+        <div class="card-soft p-4 mb-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <span class="status-pill bg-success-subtle text-success" th:text="${#strings.replace(recorridoActivo.estado, '_', ' ')}">EN CURSO</span>
+                <h2 class="h4 fw-bold mt-2 mb-1" th:text="${asignacion.ruta.nombre}">Ruta</h2>
+                <p class="text-secondary mb-0">
+                    Inicio real: <span th:text="${recorridoActivo.horaInicio}">08:00</span> ·
+                    Recorrido #<span th:text="${recorridoActivo.id}">1</span>
+                </p>
+            </div>
+            <a class="btn btn-outline-danger" th:href="@{/conductor/incidencias/nueva}">
+                <i class="bi bi-exclamation-triangle me-1"></i> Reportar incidencia
+            </a>
+        </div>
+
+        <div class="card-soft overflow-hidden mb-4">
+            <div class="p-4 border-bottom">
+                <h2 class="h5 fw-bold mb-1">Paraderos del recorrido</h2>
+                <p class="text-secondary small mb-0">Registra la llegada conforme avances.</p>
+            </div>
+            <div class="list-group list-group-flush">
+                <div class="list-group-item p-4" th:if="${#lists.isEmpty(paraderosRecorrido)}">
+                    <div class="text-center text-secondary py-4">No hay paraderos disponibles para este recorrido.</div>
+                </div>
+                <div class="list-group-item p-4" th:each="paradero : ${paraderosRecorrido}">
+                    <div class="row align-items-center g-3">
+                        <div class="col-auto">
+                            <span class="route-order" th:text="${paradero.orden}">1</span>
+                        </div>
+                        <div class="col">
+                            <h3 class="h6 fw-bold mb-1" th:text="${paradero.nombre}">Paradero</h3>
+                            <p class="small text-secondary mb-1" th:text="${paradero.direccion}">Dirección</p>
+                            <small class="text-success" th:if="${paradero.fechaHoraLlegada != null}">
+                                <i class="bi bi-check-circle-fill me-1"></i>
+                                <strong th:text="${paradero.estadoLlegada}">LLEGO</strong>
+                                a las <span th:text="${#temporals.format(paradero.fechaHoraLlegada, 'HH:mm')}">00:00</span>
+                            </small>
+                            <small class="text-secondary" th:if="${paradero.fechaHoraLlegada == null}">
+                                <i class="bi bi-hourglass-split me-1"></i>
+                                <span th:text="${paradero.estadoLlegada != null ? paradero.estadoLlegada : 'PENDIENTE'}">PENDIENTE</span>
+                            </small>
+                            <small th:if="${!#strings.isEmpty(paradero.observaciones)}"
+                                   class="d-block text-secondary mt-1"
+                                   th:text="${paradero.observaciones}">Observación</small>
+                        </div>
+                        <div class="col-md-auto"
+                             th:if="${paradero.fechaHoraLlegada == null and paradero.rutaParaderoID == proximoParaderoID}">
+                            <form class="d-flex gap-2"
+                                  th:action="@{/conductor/recorrido/paradero/{paradero}/llegada(paradero=${paradero.rutaParaderoID})}"
+                                  method="post">
+                                <input class="form-control form-control-sm" name="observaciones" placeholder="Observaciones (opcional)" maxlength="500">
+                                <button class="btn btn-sm btn-primary text-nowrap" type="submit">
+                                    <i class="bi bi-geo-alt-fill me-1"></i> Marcar llegada
+                                </button>
+                            </form>
+                        </div>
+                        <div class="col-md-auto"
+                             th:if="${paradero.fechaHoraLlegada == null and paradero.rutaParaderoID != proximoParaderoID}">
+                            <button class="btn btn-sm btn-light border text-secondary" type="button" disabled>
+                                <i class="bi bi-lock-fill me-1"></i> Espera el anterior
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-soft p-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <h2 class="h5 fw-bold mb-1">Finalizar recorrido</h2>
+                <p th:if="${todosParaderosMarcados}" class="text-secondary small mb-0">Registra la hora real de cierre y cambia el estado a FINALIZADO.</p>
+                <p th:if="${not todosParaderosMarcados}" class="text-secondary small mb-0">Primero marca todos los paraderos para poder finalizar.</p>
+            </div>
+            <form th:if="${todosParaderosMarcados}" th:action="@{/conductor/recorrido/finalizar}" method="post" onsubmit="return confirm('¿Finalizar este recorrido?');">
+                <button class="btn btn-success fw-semibold" type="submit">
+                    <i class="bi bi-flag-fill me-1"></i> Finalizar recorrido
+                </button>
+            </form>
+            <button th:if="${not todosParaderosMarcados}" class="btn btn-light border text-secondary" type="button" disabled>
+                <i class="bi bi-lock-fill me-1"></i> Finalizar bloqueado
+            </button>
+        </div>
+    </section>
+</div>
+</body>
+</html>

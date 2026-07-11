@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{compartido/layout :: master(~{::#pagina-contenido}, ~{::title})}">
+<head>
+	<title>Sistema Bus Control - Mantenimientos</title>
+</head>
+<body>
+<div id="pagina-contenido">
+
+	<div class="mb-4">
+		<h1 class="h3 fw-bold">Mantenimientos de Vehículos</h1>
+		<p class="text-muted">Gestión de los mantenimientos registrados.</p>
+	</div>
+
+	<a th:href="@{/supervisor/vehiculos-mantenimiento/form}" class="btn btn-primary mb-3">Nuevo mantenimiento</a>
+
+	<div class="card border-0 shadow-sm">
+		<div class="card-body p-0">
+			<table class="table table-hover mb-0">
+				<thead class="table-light">
+					<tr>
+						<th>ID</th>
+						<th>Vehículo</th>
+						<th>Fecha inicio</th>
+						<th>Fecha entrega</th>
+						<th>Estado</th>
+						<th width="180">Acciones</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<tr th:if="${#lists.isEmpty(mantenimientos)}">
+						<td colspan="6" class="text-center py-4">
+							No hay mantenimientos registrados
+						</td>
+					</tr>
+
+					<tr th:each="m : ${mantenimientos}">
+						<td th:text="${m.id}"></td>
+						<td th:text="${m.vehiculoPlaca}"></td>
+						<td th:text="${#temporals.format(m.fechaInicio,'dd/MM/yyyy')}"></td>
+						<td th:text="${#temporals.format(m.fechaFin,'dd/MM/yyyy')}"></td>
+						<td>
+							<span
+                               th:class="${m.estado == 'ACTIVO'? 'badge text-bg-warning px-3 py-1.5 rounded-pill fw-bold' :
+                                          (m.estado == 'INACTIVO' ? 'badge bg-secondary-subtle text-secondary px-3 py-1.5 rounded-pill fw-bold' :
+                                          'badge bg-success-subtle text-success px-3 py-1.5 rounded-pill fw-bold')}"
+							 th:text="${m.estado}">-</span>
+						</td>
+						<td>
+							<a th:href="@{'/supervisor/vehiculos-mantenimiento/form?id=' + ${m.id}}" class="btn btn-warning btn-sm">Editar</a>
+							<a th:href="@{'/supervisor/vehiculos-mantenimiento/eliminar/' + ${m.id}}" class="btn btn-danger btn-sm"
+								onclick="return confirm('¿Eliminar este registro de mantenimiento?')">
+								<i class="bi bi-trash"></i>
+								Eliminar
+							</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+</body>
+</html>

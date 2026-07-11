@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{compartido/layout :: master(~{::#pagina-contenido}, ~{::title})}">
+<head>
+    <title>Sistema Bus Control - Panel Principal</title>
+</head>
+<body>
+    <div id="pagina-contenido">
+        <div class="mb-4">
+            <h1 class="h3 fw-bold mb-1" th:text="'Bienvenido al panel, ' + ${nombreUsuario}">Bienvenido</h1>
+            <p class="text-muted">Resumen general de los módulos activos y recursos de transporte.</p>
+        </div>
+        
+        <div class="row mb-5 g-4">
+            <div class="col-md-3">
+                <div class="card card-custom p-3 bg-white border-0 shadow-sm" style="border-radius: 12px; height: 100%;">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-secondary fw-semibold mb-1" style="font-size: 0.9rem;">Flota de Buses</h6>
+                            <h2 class="fw-bold mb-0 text-dark" th:text="${totalBuses}">0</h2>
+                        </div>
+                        <div class="bg-primary bg-opacity-10 p-3 rounded-3 text-primary">
+                            <i class="bi bi-bus-front fs-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="card card-custom p-3 bg-white border-0 shadow-sm" style="border-radius: 12px; height: 100%;">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-secondary fw-semibold mb-1" style="font-size: 0.9rem;">Personal / Usuarios</h6>
+                            <h2 class="fw-bold mb-0 text-dark" th:text="${totalPersonal}">0</h2>
+                        </div>
+                        <div class="bg-success bg-opacity-10 p-3 rounded-3 text-success">
+                            <i class="bi bi-people-fill fs-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="card card-custom p-3 bg-white border-0 shadow-sm" style="border-radius: 12px; height: 100%;">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-secondary fw-semibold mb-1" style="font-size: 0.9rem;">Paraderos</h6>
+                            <h2 class="fw-bold mb-0 text-dark" th:text="${totalParaderos}">0</h2>
+                        </div>
+                        <div class="bg-danger bg-opacity-10 p-3 rounded-3 text-danger">
+                            <i class="bi bi-geo-alt-fill fs-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card card-custom p-3 bg-white border-0 shadow-sm" style="border-radius: 12px; height: 100%;">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-secondary fw-semibold mb-1" style="font-size: 0.9rem;">Estaciones Centrales</h6>
+                            <h2 class="fw-bold mb-0 text-dark" th:text="${totalEstaciones}">0</h2>
+                        </div>
+                        <div class="bg-warning bg-opacity-10 p-3 rounded-3 text-warning">
+                            <i class="bi bi-building-fill fs-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card card-custom p-4 border-0 shadow-sm" style="border-radius: 12px; background-color: #ffffff;">
+            <h5 class="fw-bold text-dark mb-2"><i class="bi bi-sliders me-2 text-primary"></i>Panel de Administración Operativa</h5>
+            <p class="text-muted mb-0" style="font-size: 0.95rem; line-height: 1.6;">
+                Utiliza el menú lateral izquierdo para navegar libremente por la plataforma. Desde allí podrás auditar las credenciales del personal, expandir los paraderos físicos de la red de transporte urbano, añadir nuevas terminales de control o actualizar la flota vehicular del consorcio de manera centralizada.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

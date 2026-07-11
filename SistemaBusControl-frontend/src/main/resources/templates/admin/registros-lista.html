@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{compartido/layout :: master(~{::#pagina-contenido}, ~{::title})}">
+<head>
+    <title>Sistema Bus Control - Registros</title>
+</head>
+<body>
+    <div id="pagina-contenido">
+        <div class="mb-4 d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h3 fw-bold mb-1">Registros</h1>
+                <p class="text-muted mb-0">Listado de todas las acciones realizadas.</p>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-0" style="overflow: hidden; border-radius: 16px;">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-secondary">
+                        <tr>
+                            <th class="ps-4">ID</th> 
+                            <th>Accion</th>
+                            <th>Descripcion</th>
+                            <th>Entidad</th>
+							<th>Usuario</th>
+							<th class="text-center">Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(registros)}">
+                            <td colspan="7" class="text-center py-5 text-muted">No se encontraron registros registrados.</td>
+                        </tr>
+                        <tr th:each="e : ${registros}">
+                            <td class="ps-4 fw-bold text-secondary" th:text="${e.id}">1</td>
+                            <td class="fw-bold text-dark"><span th:text="${#strings.replace(e.accion, '_', ' ')}">Accion</span></td>
+                            <td th:text="${e.descripcion}"></td>
+							<td th:text="${e.entidadAfectada}"></td>
+							<td th:text="${e.usuarioId +' '+ e.usuarioNombre}"></td>
+							<td th:text="${#temporals.format(e.fecha, 'yyyy-MM-dd''T''HH:mm:ssZ')}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+		<div class="d-flex justify-content-between align-items-center mt-4 px-2" th:if="${error == null}">
+		            <p class="text-muted mb-0">Página: <span class="fw-bold text-primary" th:text="${paginaActual + 1}">1</span></p>
+		            <div class="btn-group shadow-sm rounded-3">
+		                <a th:href="@{/admin/registros(pagina=${paginaActual > 0 ? paginaActual - 1 : 0})}" 
+		                   class="btn btn-white border px-3 text-primary" 
+		                   th:classappend="${paginaActual == 0} ? 'disabled text-muted' : ''">
+		                   <i class="bi bi-chevron-left me-1"></i> Anterior
+		                </a>
+		                
+		                <a th:href="@{/admin/registros(pagina=${paginaActual + 1})}" 
+		                   class="btn btn-white border px-3 text-primary" 
+		                   th:classappend="${#lists.isEmpty(registros) || registros.size() < 10} ? 'disabled text-muted' : ''">
+		                   Siguiente <i class="bi bi-chevron-right ms-1"></i>
+		                </a>
+		            </div>
+		        </div>
+    </div>
+</body>
+</html>

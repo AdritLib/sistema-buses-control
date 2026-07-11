@@ -1,0 +1,86 @@
+:root {
+    --bus-navy: #0f172a;
+    --bus-slate: #334155;
+    --bus-muted: #64748b;
+    --bus-canvas: #f1f5f9;
+    --bus-border: #e2e8f0;
+    --bus-primary: #2563eb;
+    --bus-primary-dark: #1d4ed8;
+}
+
+.page-shell {
+    max-width: 1180px;
+}
+
+.page-eyebrow {
+    color: var(--bus-primary);
+    letter-spacing: .08em;
+}
+
+.card-soft {
+    border: 1px solid var(--bus-border);
+    border-radius: 16px;
+    background: white;
+    box-shadow: 0 10px 30px rgb(15 23 42 / 6%);
+}
+
+.metric-icon {
+    display: grid;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    border-radius: 13px;
+    color: var(--bus-primary);
+    background: #dbeafe;
+}
+
+.route-line {
+    position: relative;
+}
+
+.route-line::before {
+    position: absolute;
+    top: 1.6rem;
+    bottom: -1.6rem;
+    left: 1.05rem;
+    width: 2px;
+    content: "";
+    background: #bfdbfe;
+}
+
+.route-line:last-child::before {
+    display: none;
+}
+
+.route-order {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    flex: 0 0 auto;
+    width: 2.2rem;
+    height: 2.2rem;
+    place-items: center;
+    border-radius: 50%;
+    color: white;
+    background: var(--bus-primary);
+    font-weight: 700;
+}
+
+.status-pill {
+    border-radius: 999px;
+    font-size: .78rem;
+    padding: .4rem .7rem;
+    font-weight: 700;
+}
+
+.empty-state {
+    border: 1px dashed #94a3b8;
+    border-radius: 16px;
+    background: rgb(255 255 255 / 55%);
+}
+
+@media (max-width: 767px) {
+    .page-shell {
+        padding-inline: 1rem !important;
+    }
+}

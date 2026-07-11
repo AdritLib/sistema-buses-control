@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{compartido/layout :: master(~{::#pagina-contenido}, ~{::title})}">
+<head>
+    <title>Sistema Bus Control - Personal de Empresa</title>
+</head>
+<body>
+<div id="pagina-contenido">
+    <div class="mb-4">
+        <h1 class="h3 fw-bold mb-1">Control de Personal</h1>
+        <p class="text-muted mb-0">Auditoría de credenciales corporativas y control de accesos al sistema global.</p>
+    </div>
+	
+	<div>
+        <a th:href="@{/admin/personal/form}" class="btn btn-primary shadow-sm fw-semibold" style="border-radius: 8px;">
+            <i class="bi bi-person-plus-fill me-2"></i>Registrar Personal
+        </a>
+    </div>
+
+    <div th:if="${param.cambioExito}" class="alert alert-success card-custom border-0 bg-success text-white mb-4" style="border-radius: 8px;">
+        <i class="bi bi-check-circle-fill me-2"></i> <strong>Modificación Exitosa!</strong> Operación procesada de forma correcta.
+    </div>
+    <div th:if="${error}" class="alert alert-danger card-custom border-0 mb-4" th:text="${error}" style="border-radius: 8px;"></div>
+
+    <div class="card card-custom border-0 shadow-sm" style="border-radius: 12px;">
+        <div class="card-body p-0" style="border-radius: 12px; overflow: hidden;">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light text-secondary fw-semibold">
+                    <tr>
+                        <th class="ps-4">ID</th>
+                        <th>Usuario</th>
+                        <th>Correo Electrónico</th>
+                        <th>Rol</th>
+						<th>Estado</th>
+                        <th class="text-center pe-4" style="width: 280px;">Acciones de Seguridad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${personal == null || #lists.isEmpty(personal)}">
+                        <td colspan="5" class="text-center py-5 text-muted">No hay usuarios registrados en esta página.</td>
+                    </tr>
+                    <tr th:each="p : ${personal}">
+                        <td class="ps-4 fw-bold text-secondary" th:text="${p.id}">1</td>
+                        <td class="fw-bold text-dark" th:text="${p.nombre}">Nombre Completo</td>
+                        <td th:text="${p.correo}">correo@empresa.com</td>
+                        <td>
+                            <span th:text="${p.rol}"
+                                   th:class="${p.rol == 'ADMIN' ? 'badge bg-danger-subtle text-danger px-3 py-1.5 rounded-pill fw-bold' :
+                                              (p.rol == 'SUPERVISOR' ? 'badge bg-primary-subtle text-primary px-3 py-1.5 rounded-pill fw-bold' :
+                                              'badge bg-success-subtle text-success px-3 py-1.5 rounded-pill fw-bold')}">ROL</span>
+                        </td>
+						<td>
+                            <span
+                                   th:class="${!p.activo ? 'badge text-bg-danger px-3 py-1.5 rounded-pill fw-bold' :
+                                              (p.activo ? 'badge text-bg-success px-3 py-1.5 rounded-pill fw-bold' :
+                                              'badge bg-success-subtle text-success px-3 py-1.5 rounded-pill fw-bold')}"
+								 th:text="${p.activo ? 'ACTIVO' : 'INACTIVO'}">-</span>
+                        </td>
+                        <td class="text-center pe-4">
+                            <div class="d-flex justify-content-center gap-1">
+								<a th:href="@{/admin/personal/form(id=${p.id})}" class="btn btn-sm btn-outline-primary border fw-semibold px-2.5"><i class="bi bi-pencil-square"></i> Actualizar</a>
+                                <a th:onclick="|establecerActivoConMotivo(this, ${p.id}, true)|" th:if="${!p.activo}" class="btn btn-sm btn-light border text-success fw-semibold px-2.5" title="Activar"><i class="bi bi-unlock-fill me-1"></i> Reactivar</a>
+                                <a th:onclick="|establecerActivoConMotivo(this, ${p.id}, false)|" th:if="${p.activo}" class="btn btn-sm btn-light border text-danger fw-semibold px-2.5" title="Desactivar"><i class="bi bi-lock-fill me-1"></i> Desactivar</a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-3 px-2" th:if="${error == null}">
+        <p class="text-muted mb-0">Página: <span class="fw-bold text-primary" th:text="${paginaActual + 1}">1</span></p>
+        <div class="btn-group shadow-sm" style="border-radius: 8px; overflow: hidden;">
+            <a th:href="@{/admin/personal(pagina=${paginaActual > 0 ? paginaActual - 1 : 0})}" 
+               class="btn btn-white border fw-semibold px-3" 
+               th:classappend="${paginaActual == 0} ? 'disabled text-muted' : 'text-primary'">
+               <i class="bi bi-chevron-left me-1"></i> Anterior
+            </a>
+            
+            <a th:href="@{/admin/personal(pagina=${paginaActual + 1})}" 
+               class="btn btn-white border fw-semibold px-3 text-primary" 
+               th:classappend="${#lists.isEmpty(personal) || personal.size() < 10} ? 'disabled text-muted' : ''">
+               Siguiente <i class="bi bi-chevron-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+	<script>
+		function establecerActivoConMotivo(activador, personalId, activo){
+			let motivo = prompt(`Ingrese el motivo de ${activo ? 'reactivacion' : 'desactivacion'} del usuario #`+personalId);
+			if(!motivo || motivo.trim().length == 0) return;
+			
+			const linkA = `http://localhost:8080/admin/personal/establecerActivo/${personalId}?activo=${activo}&motivo=${motivo}`;
+			window.location.href = linkA;
+		}
+	</script>
+</div>
+</body>
+</html>

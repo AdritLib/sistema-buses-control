@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{compartido/layout :: master(~{::#pagina-contenido}, ~{::title})}">
+
+<head>
+	<title>Sistema Bus Control - Incidencias</title>
+</head>
+
+<body>
+	<div id="pagina-contenido">
+
+		<div class="mb-4">
+			<h1 class="h3 fw-bold">Incidencias</h1>
+			<p class="text-muted">Reportes operativos del sistema.</p>
+		</div>
+
+		<a th:href="@{/supervisor/incidencias/form}" class="btn btn-primary mb-3">
+			Nueva incidencia
+		</a>
+		<div class="card border-0 shadow-sm">
+			<div class="card-body p-0">
+
+				<table class="table table-hover mb-0">
+					<thead class="table-light">
+						<tr>
+							<th>ID</th>
+							<th>Descripción</th>
+							<th>Fecha</th>
+							<th>Num. de Recorrido</th>
+							<th>Reportante</th>
+							<th></th>
+						</tr>
+					</thead>
+
+					<tbody>
+
+						<tr th:if="${#lists.isEmpty(incidencias)}">
+							<td colspan="5" class="text-center py-4">
+								No hay incidencias registradas
+							</td>
+						</tr>
+
+						<tr th:each="i : ${incidencias}">
+							<td th:text="${i.id}"></td>
+							<td th:text="${i.descripcion}"></td>
+							<td th:text="${#temporals.format(i.fechaHoraSuceso, 'dd/MM/yyyy HH:mm')}"></td>
+							<td th:text="${i.recorridoID}"></td>
+							<td th:text="${i.usuarioNombre}"></td>
+							<td>
+								<a th:href="@{'/supervisor/incidencias/form?id=' + ${i.id}}"
+									class="btn btn-sm btn-warning">
+									Editar
+								</a>
+
+								<form th:action="@{'/supervisor/incidencias/eliminar/' + ${i.id}}" method="post"
+									style="display:inline">
+
+									<button type="submit" class="btn btn-sm btn-danger"
+										onclick="return confirm('¿Eliminar incidencia?')">
+										Eliminar
+									</button>
+
+								</form>
+							</td>
+						</tr>
+
+					</tbody>
+				</table>
+
+			</div>
+		</div>
+
+	</div>
+</body>
+
+</html>

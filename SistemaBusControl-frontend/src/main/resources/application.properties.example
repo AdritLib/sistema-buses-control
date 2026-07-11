@@ -1,0 +1,12 @@
+spring.application.name=SistemaBuses-frontend
+server.port=${FRONTEND_PORT:8080}
+
+backend.base-url=${BACKEND_URL:http://localhost:8085}
+
+spring.cloud.openfeign.httpclient.hc5.enabled=true
+spring.servlet.encoding.charset=UTF-8
+spring.servlet.encoding.enabled=true
+spring.servlet.encoding.force=true
+
+spring.thymeleaf.cache=false
+spring.web.error.whitelabel.enabled=false

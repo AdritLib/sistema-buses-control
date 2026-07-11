@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{compartido/layout :: master(~{::#pagina-contenido}, ~{::title})}">
+<head>
+    <title>Sistema Bus Control - Rutas</title>
+</head>
+<body>
+    <div id="pagina-contenido">
+        <div class="mb-4 d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h3 fw-bold mb-1">Rutas</h1>
+                <p class="text-muted mb-0">Gestión de rutas registradas.</p>
+            </div>
+            
+            <div class="d-flex gap-2">
+                <a th:href="@{/admin/rutas/nuevo}" class="btn btn-primary fw-semibold px-4 rounded-pill shadow-sm">
+                    <i class="bi bi-stoplights"></i> Nueva ruta
+                </a>
+            </div>
+        </div>
+
+        <div th:if="${param.exito}" class="alert alert-success border-0 mb-4 rounded-3"><i class="bi bi-check-circle-fill me-2"></i> Operación exitosa.</div>
+        <div th:if="${error}" class="alert alert-danger border-0 mb-4 rounded-3" th:text="${error}"></div>
+
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-0" style="overflow: hidden; border-radius: 16px;">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-secondary">
+                        <tr>
+                            <th class="ps-4">ID</th>
+                            <th>Nombre</th>
+                            <th>Tipo</th>
+                            <th>Estado</th>
+							<th>Origen</th>
+							<th>Destino</th>
+                            <th class="text-center pe-4">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(rutas)}">
+                            <td colspan="7" class="text-center py-5 text-muted">No se encontraron rutas registradas.</td>
+                        </tr>
+                        <tr th:each="e : ${rutas}">
+                            <td class="ps-4 fw-bold text-secondary" th:text="${e.id}"></td>
+                            <td class="fw-bold text-dark"><i class="bi bi-stoplights me-2 text-primary"></i> <span th:text="${e.nombre}">Nombre</span></td>
+                            <td th:text="${e.tipo}"></td>
+							<td>
+								<span th:text="${e.estado}"
+                                      th:class="${e.estado == 'ACTIVO' ? 'badge text-bg-success border px-3 py-1.5 rounded-pill' :
+                                                 (e.estado == 'INACTIVO' ? 'badge text-bg-danger border px-3 py-1.5 rounded-pill' :
+                                                 'badge text-bg-danger warning border-warning-subtle px-3 py-1.5 rounded-pill')}">Estado</span>
+							</td>
+							<td th:text="${e.estacionOrigenNombre}"></td>
+							<td th:text="${e.estacionDestinoNombre}"></td>
+                            <td class="text-center pe-4">
+                                <a th:href="@{/admin/rutas/editar/{id}(id=${e.id})}" class="btn btn-sm btn-light border text-primary"><i class="bi bi-pencil-square"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+		<div class="d-flex justify-content-between align-items-center mt-4 px-2" th:if="${param.idBuscado == null && error == null}">
+		            <p class="text-muted mb-0">Página: <span class="fw-bold text-primary" th:text="${paginaActual + 1}">1</span></p>
+		            <div class="btn-group shadow-sm rounded-3">
+		                <a th:href="@{/admin/rutas(pagina=${paginaActual > 0 ? paginaActual - 1 : 0})}" 
+		                   class="btn btn-white border px-3 text-primary" 
+		                   th:classappend="${paginaActual == 0} ? 'disabled text-muted' : ''">
+		                   <i class="bi bi-chevron-left me-1"></i> Anterior
+		                </a>
+		                
+		                <a th:href="@{/admin/rutas(pagina=${paginaActual + 1})}" 
+		                   class="btn btn-white border px-3 text-primary" 
+		                   th:classappend="${#lists.isEmpty(rutas) || rutas.size() < 10} ? 'disabled text-muted' : ''">
+		                   Siguiente <i class="bi bi-chevron-right ms-1"></i>
+		                </a>
+		            </div>
+		        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="master(content, title)">
+<head>
+    <meta charset="UTF-8">
+    <title th:replace="${title}">Sistema Bus Control</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+	<link th:href="@{/css/conductor.css}" rel="stylesheet">
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f8f9fa; }
+        .sidebar { height: 100vh; width: 260px; position: fixed; top: 0; left: 0; background-color: #1e293b; color: #fff; z-index: 100; }
+        .sidebar .nav-link { color: #94a3b8; font-weight: 500; padding: 12px 20px; border-radius: 8px; margin: 4px 15px; text-decoration: none; display: block; }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: #334155; color: #fff; }
+        .main-content { margin-left: 260px; padding: 40px; }
+        .card-custom { border: none; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar d-flex flex-column justify-content-between" th:if="${session.rol != null}">
+        <div>
+            <div class="px-4 py-4 d-flex align-items-center">
+                <i class="bi bi-bus-front-fill text-primary fs-3 me-2"></i>
+                <span class="fs-4 fw-bold">Bus Control</span>
+            </div>
+            <hr class="mx-3 bg-secondary">
+            
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li class="nav-item">
+					
+					<a th:if="${session.rol == 'SUPERVISOR'}" th:href="@{/supervisor/dashboard}" class="nav-link" 
+                       th:classappend="${menuActivo == 'dashboard'} ? 'active' : ''">
+                        <i class="bi bi-grid-1x2-fill me-2"></i> Dashboard
+                    </a>
+					<a th:if="${session.rol == 'ADMIN'}" th:href="@{/admin/dashboard}" class="nav-link" 
+                       th:classappend="${menuActivo == 'dashboard'} ? 'active' : ''">
+                        <i class="bi bi-grid-1x2-fill me-2"></i> Dashboard
+                    </a>
+					<a th:if="${session.rol == 'CONDUCTOR'}" th:href="@{/conductor/dashboard}" class="nav-link" 
+                       th:classappend="${menuActivo == 'dashboard'} ? 'active' : ''">
+                        <i class="bi bi-grid-1x2-fill me-2"></i> Dashboard
+                    </a>
+                </li>
+
+                <li th:if="${session.rol == 'ADMIN'}">
+                    <a th:href="@{/admin/vehiculos}" class="nav-link" 
+                       th:classappend="${menuActivo == 'vehiculos'} ? 'active' : ''">
+                        <i class="bi bi-truck me-2"></i> Flota de Buses
+                    </a>
+                </li>
+                <li th:if="${session.rol == 'ADMIN'}">
+                     <a th:href="@{/admin/personal}" class="nav-link" 
+                        th:classappend="${menuActivo == 'personal'} ? 'active' : ''">
+                        <i class="bi bi-people-fill me-2"></i> Gestión de Personal
+                     </a>
+                </li>
+                <li th:if="${session.rol == 'ADMIN'}" class="nav-item">
+                    <a th:href="@{/admin/paraderos}" 
+                       th:classappend="${menuActivo == 'paraderos' ? 'active' : ''}" 
+                       class="nav-link">
+                        <i class="bi bi-geo-alt-fill me-2"></i> 
+                        <span>Paraderos</span>
+                    </a>
+                </li>
+                <li th:if="${session.rol == 'ADMIN'}" class="nav-item">
+                    <a th:href="@{/admin/estaciones}" th:classappend="${menuActivo == 'estaciones' ? 'active' : ''}" class="nav-link">
+                        <i class="bi bi-building-fill me-2"></i>
+                        <span>Estaciones</span>
+                    </a>
+                </li>
+				<li th:if="${session.rol == 'ADMIN'}" class="nav-item">
+                    <a th:href="@{/admin/rutas}" 
+                       th:classappend="${menuActivo == 'rutas' ? 'active' : ''}" 
+                       class="nav-link">
+                        <i class="bi bi-stoplights"></i>
+                        <span>Rutas</span>
+                    </a>
+                </li>
+				<li th:if="${session.rol == 'ADMIN'}" class="nav-item">
+                    <a th:href="@{/admin/registros}" 
+                       th:classappend="${menuActivo == 'registros' ? 'active' : ''}" 
+                       class="nav-link">
+                        <i class="bi bi-card-list"></i>
+                        <span>Registros</span>
+                    </a>
+                </li>
+				
+
+				<li th:if="${session.rol == 'CONDUCTOR'}" class="nav-item">
+				    <a th:href="@{/conductor/mi-ruta}" class="nav-link"
+				       th:classappend="${menuActivo == 'mi-ruta'} ? 'active' : ''">
+				        <i class="bi bi-map-fill me-2"></i> Mi ruta
+				    </a>
+				</li>
+				<li th:if="${session.rol == 'CONDUCTOR'}" class="nav-item">
+				    <a th:href="@{/conductor/recorrido}" class="nav-link"
+				       th:classappend="${menuActivo == 'recorrido'} ? 'active' : ''">
+				        <i class="bi bi-signpost-split-fill me-2"></i> Recorrido
+				    </a>
+				</li>
+				<li th:if="${session.rol == 'CONDUCTOR'}" class="nav-item">
+				    <a th:href="@{/conductor/incidencias/nueva}" class="nav-link"
+				       th:classappend="${menuActivo == 'incidencias'} ? 'active' : ''">
+				        <i class="bi bi-exclamation-triangle-fill me-2"></i> Reportar incidencia
+				    </a>
+				</li>
+				<li th:if="${session.rol == 'CONDUCTOR'}" class="nav-item">
+				    <a th:href="@{/conductor/historial}" class="nav-link"
+				       th:classappend="${menuActivo == 'historial'} ? 'active' : ''">
+				        <i class="bi bi-clock-history me-2"></i> Historial
+				    </a>
+				</li>
+				
+				<li th:if="${session.rol == 'SUPERVISOR'}">
+					<a th:href="@{/supervisor/vehiculos-mantenimiento}" class="nav-link"
+						th:classappend="${menuActivo == 'mantenimiento'} ? 'active' : ''">
+						<i class="bi bi-tools me-2"></i> Mantenimientos
+					</a>
+				</li>
+
+				<li th:if="${session.rol == 'SUPERVISOR'}">
+					<a th:href="@{/supervisor/vehiculos-seguro}" class="nav-link"
+						th:classappend="${menuActivo == 'seguro'} ? 'active' : ''">
+						<i class="bi bi-shield-check me-2"></i> Seguros
+					</a>
+				</li>
+
+				<li th:if="${session.rol == 'SUPERVISOR'}">
+					<a th:href="@{/supervisor/asignaciones}" class="nav-link"
+						th:classappend="${menuActivo == 'asignaciones'} ? 'active' : ''">
+						<i class="bi bi-diagram-3 me-2"></i> Asignaciones
+					</a>
+				</li>
+
+				<li th:if="${session.rol == 'SUPERVISOR'}">
+					<a th:href="@{/supervisor/incidencias}" class="nav-link"
+						th:classappend="${menuActivo == 'incidencias'} ? 'active' : ''">
+						<i class="bi bi-exclamation-triangle me-2"></i> Incidencias
+					</a>
+				</li>
+				
+            </ul>
+        </div>
+        
+        <div class="px-4 mb-4">
+            <a th:href="@{/dashboard/perfil}" style="text-decoration: none;" class="d-flex align-items-center mb-3" title="Ir a tu perfil">
+                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" 
+                     style="width: 40px; height: 40px;" 
+                     th:text="${session.nombreUsuario != null ? #strings.substring(session.nombreUsuario,0,1).toUpperCase() : 'U'}">U</div>
+                <div class="ms-2">
+                    <h6 class="mb-0 text-white fs-6 th-text" th:text="${session.nombreUsuario}">Usuario</h6>
+                    <small class="text-light" th:text="${#strings.capitalize(#strings.toLowerCase(session.rol))}">Rol</small>
+                </div>
+            </a>
+            <a th:href="@{/logout}" class="btn btn-outline-danger w-100 btn-sm"><i class="bi bi-box-arrow-left"></i> Salir</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div th:replace="${content}">
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted) {
+                window.location.reload(); 
+            }
+        });
+    </script>
+
+</body>
+</html>

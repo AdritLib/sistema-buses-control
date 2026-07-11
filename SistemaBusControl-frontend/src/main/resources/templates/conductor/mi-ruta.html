@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{compartido/layout :: master(~{::#pagina-contenido}, ~{::title})}">
+<head>
+    <title>Sistema Bus Control - Mi ruta</title>
+	
+</head>
+<body>
+<div id="pagina-contenido" class="page-shell">
+    <p class="page-eyebrow small fw-bold text-uppercase mb-2">Ruta asignada</p>
+    <h1 class="h3 fw-bold mb-1">Mi ruta de hoy</h1>
+    <p class="text-secondary mb-4">Consulta la unidad, el trayecto y el avance real por paradero.</p>
+
+    <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+    <div th:if="${recorridoFinalizado}" class="alert alert-info" role="alert">
+        <i class="bi bi-check-circle-fill me-1"></i>
+        El recorrido de esta asignación ya fue finalizado. Esta pantalla queda como consulta de la ruta realizada.
+    </div>
+
+    <section th:if="${asignacion != null}">
+        <div class="row g-3 mb-4">
+            <div class="col-lg-4">
+                <article class="card-soft h-100 p-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <span class="metric-icon"><i class="bi bi-bus-front fs-4"></i></span>
+                        <div>
+                            <small class="text-secondary">Vehículo asignado</small>
+                            <h2 class="h5 fw-bold mb-0" th:text="${asignacion.vehiculo.placa}">ABC-123</h2>
+                        </div>
+                    </div>
+                    <p class="fw-semibold mb-1"
+                       th:text="${asignacion.vehiculo.marca + ' ' + asignacion.vehiculo.modelo}">Marca y modelo</p>
+                    <p class="small text-secondary mb-0">
+                        <span th:if="${asignacion.vehiculo.year != null and asignacion.vehiculo.year > 0}"
+                              th:text="${'Año ' + asignacion.vehiculo.year}">Año</span>
+                        <span th:if="${asignacion.vehiculo.year != null and asignacion.vehiculo.year > 0 and asignacion.vehiculo.numAsientos != null and asignacion.vehiculo.numAsientos > 0}"> · </span>
+                        <span th:if="${asignacion.vehiculo.numAsientos != null and asignacion.vehiculo.numAsientos > 0}"
+                              th:text="${asignacion.vehiculo.numAsientos + ' asientos'}">Asientos</span>
+                    </p>
+                </article>
+            </div>
+
+            <div class="col-lg-4">
+                <article class="card-soft h-100 p-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <span class="metric-icon"><i class="bi bi-map fs-4"></i></span>
+                        <div>
+                            <small class="text-secondary">Ruta</small>
+                            <h2 class="h5 fw-bold mb-0" th:text="${ruta.nombre}">Nombre de ruta</h2>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        <span class="status-pill bg-primary-subtle text-primary" th:text="${ruta.tipo}">IDA</span>
+                        <span class="status-pill bg-success-subtle text-success" th:text="${ruta.estado}">ACTIVO</span>
+                    </div>
+                </article>
+            </div>
+
+            <div class="col-lg-4">
+                <article class="card-soft h-100 p-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <span class="metric-icon"><i class="bi bi-clock fs-4"></i></span>
+                        <div>
+                            <small class="text-secondary">Horario programado</small>
+                            <h2 class="h5 fw-bold mb-0">
+                                <span th:text="${asignacion.horaInicio}">08:00</span>
+                                <span class="text-secondary"> – </span>
+                                <span th:text="${asignacion.horaFin}">17:00</span>
+                            </h2>
+                        </div>
+                    </div>
+                    <p class="small text-secondary mb-0"
+                       th:text="${#temporals.format(asignacion.fecha, 'dd/MM/yyyy')}">25/06/2026</p>
+                </article>
+            </div>
+        </div>
+
+        <article class="card-soft p-4 mb-4">
+            <div class="row g-4 align-items-center">
+                <div class="col-md-5">
+                    <small class="text-secondary d-block">Estación origen</small>
+                    <strong th:text="${ruta.estacionOrigenNombre != null ? ruta.estacionOrigenNombre : 'No definida'}">
+                        Estación origen
+                    </strong>
+                </div>
+                <div class="col-md-2 text-md-center text-primary">
+                    <i class="bi bi-arrow-right fs-3"></i>
+                </div>
+                <div class="col-md-5 text-md-end">
+                    <small class="text-secondary d-block">Estación destino</small>
+                    <strong th:text="${ruta.estacionDestinoNombre != null ? ruta.estacionDestinoNombre : 'No definida'}">
+                        Estación destino
+                    </strong>
+                </div>
+            </div>
+        </article>
+
+        <article class="card-soft p-4 p-md-5">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+                <div>
+                    <h2 class="h5 fw-bold mb-1">Paraderos en orden</h2>
+                    <p class="text-secondary small mb-0" th:text="${paraderos.size() + ' puntos programados'}">
+                        Paraderos
+                    </p>
+                </div>
+                <div th:if="${recorrido != null}" class="text-md-end">
+                    <small class="text-secondary d-block">Estado del recorrido</small>
+                    <span class="status-pill bg-primary-subtle text-primary" th:text="${recorrido.estado}">EN_CURSO</span>
+                </div>
+                <div th:if="${recorrido == null}" class="text-md-end">
+                    <span class="status-pill bg-secondary-subtle text-secondary">RECORRIDO NO INICIADO</span>
+                </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(paraderos)}" class="empty-state text-center text-secondary p-5">
+                La ruta todavía no tiene paraderos configurados.
+            </div>
+
+            <div class="route-line d-flex gap-3 pb-4" th:each="paradero : ${paraderos}">
+                <span class="route-order" th:text="${paradero.orden}">1</span>
+                <div class="d-flex flex-column flex-md-row justify-content-between gap-3 flex-grow-1">
+                    <div>
+                        <h3 class="h6 fw-bold mb-1" th:text="${paradero.nombre}">Paradero</h3>
+                        <p class="text-secondary mb-1" th:text="${paradero.direccion}">Dirección</p>
+                        <small class="text-secondary">
+                            <i class="bi bi-info-circle me-1"></i>
+                            <span th:text="${!#strings.isEmpty(paradero.referencia) ? paradero.referencia : 'Sin referencia'}">
+                                Referencia
+                            </span>
+                        </small>
+                    </div>
+
+                    <div th:if="${recorrido != null}" class="text-md-end flex-shrink-0">
+                        <div th:if="${paradero.fechaHoraLlegada != null}">
+                            <span class="status-pill bg-success-subtle text-success">
+                                <i class="bi bi-check-circle-fill me-1"></i>Llegada registrada
+                            </span>
+                            <small class="d-block text-secondary mt-2">
+                                Hora real:
+                                <strong th:text="${#temporals.format(paradero.fechaHoraLlegada, 'HH:mm')}">08:35</strong>
+                            </small>
+                            <small th:if="${!#strings.isEmpty(paradero.observaciones)}"
+                                   class="d-block text-secondary mt-1"
+                                   th:text="${paradero.observaciones}">Observación</small>
+                        </div>
+                        <span th:if="${paradero.fechaHoraLlegada == null}"
+                              class="status-pill bg-warning-subtle text-warning-emphasis">
+                            <i class="bi bi-hourglass-split me-1"></i>Pendiente
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </section>
+</div>
+</body>
+</html>

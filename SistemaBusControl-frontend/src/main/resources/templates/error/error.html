@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Sistema Bus Control - Error</title>
+	<style>
+		body{
+			font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+		}
+		.btn{
+			border-radius: 5pt;
+			background-color: rgb(32, 120, 253);
+			color: white;
+			text-decoration: none;
+			padding: .4rem .6rem;
+		}
+	</style>
+	
+</head>
+<body class="px-4 py-2">
+    <div class="mb-4">
+        <h1 class="h3 fw-bold mb-1" th:text=${errorTitulo}>Mensaje de error</h1>
+        <p class="text-muted fs-3" th:text="${'('+ errorCode + ') ' + errorMensaje}">(500) Error interno del servidor.</p>
+    </div>
+    
+    <div class="row mb-5 g-4">
+		<div  th:if="${session.token != null}" class="d-flex align-items-start">
+            <a th:href="@{/dashboard/principal}" class="btn btn-primary">Volver a pagina principal</a>
+        </div>
+		<div  th:if="${session.token == null}" class="d-flex align-items-start">
+            <a th:href="@{/dashboard/principal}" class="btn btn-primary">Intentar iniciar sesion</a>
+        </div>
+    </div>
+</body>
+</html>

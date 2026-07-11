@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{compartido/layout :: master(~{::#pagina-contenido}, ~{::title})}">
+<head>
+    <title>BusControl - Detalle de recorrido</title>
+</head>
+<body>
+<div id="pagina-contenido" class="page-shell">
+    <a class="text-decoration-none text-secondary d-inline-block mb-3" th:href="@{/conductor/historial}">
+        <i class="bi bi-arrow-left me-1"></i> Volver al historial
+    </a>
+
+    <p class="page-eyebrow small fw-bold text-uppercase mb-2">Detalle operativo</p>
+    <h1 class="h3 fw-bold mb-1">
+        Recorrido <span th:text="${recorrido != null ? '#' + recorrido.id : ''}">#1</span>
+    </h1>
+    <p class="text-secondary mb-4">Consulta la información registrada durante el recorrido.</p>
+
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <section th:if="${recorrido != null}">
+        <div class="row g-3 mb-4">
+            <div class="col-lg-4">
+                <article class="card-soft h-100 p-4">
+                    <small class="text-secondary d-block">Fecha</small>
+                    <h2 class="h5 fw-bold mb-1" th:text="${#temporals.format(recorrido.fecha, 'dd/MM/yyyy')}">25/06/2026</h2>
+                    <span class="status-pill bg-primary-subtle text-primary" th:text="${recorrido.estado}">EN_CURSO</span>
+                </article>
+            </div>
+            <div class="col-lg-4">
+                <article class="card-soft h-100 p-4">
+                    <small class="text-secondary d-block">Horario real</small>
+                    <h2 class="h5 fw-bold mb-1">
+                        <span th:text="${recorrido.horaInicio != null ? recorrido.horaInicio : '-'}">08:00</span>
+                        <span class="text-secondary"> – </span>
+                        <span th:text="${recorrido.horaFin != null ? recorrido.horaFin : 'En curso'}">10:00</span>
+                    </h2>
+                    <span class="text-secondary">Asignación #<span th:text="${recorrido.asignacionID}">1</span></span>
+                </article>
+            </div>
+            <div class="col-lg-4">
+                <article class="card-soft h-100 p-4">
+                    <small class="text-secondary d-block">Vehículo</small>
+                    <h2 class="h5 fw-bold mb-1"
+                        th:text="${vehiculo != null ? vehiculo.placa : 'No disponible'}">ABC-123</h2>
+                    <span class="text-secondary"
+                          th:text="${vehiculo != null ? vehiculo.marca + ' ' + vehiculo.modelo : ''}">Marca Modelo</span>
+                </article>
+            </div>
+        </div>
+
+        <article class="card-soft p-4 mb-4">
+            <div class="row g-4 align-items-center">
+                <div class="col-lg-4">
+                    <small class="text-secondary d-block">Ruta</small>
+                    <strong th:text="${ruta != null ? ruta.nombre : 'No disponible'}">Ruta</strong>
+                    <span th:if="${ruta != null}" class="status-pill bg-primary-subtle text-primary ms-2" th:text="${ruta.tipo}">IDA</span>
+                </div>
+                <div class="col-lg-4">
+                    <small class="text-secondary d-block">Estación origen</small>
+                    <strong th:text="${ruta != null and ruta.estacionOrigenNombre != null ? ruta.estacionOrigenNombre : 'No definida'}">Origen</strong>
+                </div>
+                <div class="col-lg-4">
+                    <small class="text-secondary d-block">Estación destino</small>
+                    <strong th:text="${ruta != null and ruta.estacionDestinoNombre != null ? ruta.estacionDestinoNombre : 'No definida'}">Destino</strong>
+                </div>
+            </div>
+        </article>
+
+        <article class="card-soft overflow-hidden">
+            <div class="p-4 border-bottom">
+                <h2 class="h5 fw-bold mb-1">Paraderos del recorrido</h2>
+                <p class="text-secondary small mb-0">Estado y hora real de llegada por paradero.</p>
+            </div>
+            <div class="list-group list-group-flush">
+                <div class="list-group-item p-4" th:if="${#lists.isEmpty(paraderos)}">
+                    <div class="text-center text-secondary py-4">No hay paraderos registrados para este recorrido.</div>
+                </div>
+                <div class="list-group-item p-4" th:each="paradero : ${paraderos}">
+                    <div class="row align-items-center g-3">
+                        <div class="col-auto">
+                            <span class="route-order" th:text="${paradero.orden}">1</span>
+                        </div>
+                        <div class="col">
+                            <h3 class="h6 fw-bold mb-1" th:text="${paradero.nombre}">Paradero</h3>
+                            <p class="small text-secondary mb-1" th:text="${paradero.direccion}">Dirección</p>
+                            <small class="text-secondary" th:text="${paradero.referencia}">Referencia</small>
+                            <small th:if="${!#strings.isEmpty(paradero.observaciones)}"
+                                   class="d-block text-secondary mt-1"
+                                   th:text="${paradero.observaciones}">Observación</small>
+                        </div>
+                        <div class="col-md-auto text-md-end">
+                            <span th:if="${paradero.fechaHoraLlegada != null}" class="status-pill bg-success-subtle text-success">
+                                <i class="bi bi-check-circle-fill me-1"></i>
+                                <span th:text="${paradero.estadoLlegada}">LLEGO</span>
+                            </span>
+                            <span th:if="${paradero.fechaHoraLlegada == null}" class="status-pill bg-warning-subtle text-warning-emphasis">
+                                <i class="bi bi-hourglass-split me-1"></i>
+                                <span th:text="${paradero.estadoLlegada != null ? paradero.estadoLlegada : 'PENDIENTE'}">PENDIENTE</span>
+                            </span>
+                            <small class="d-block text-secondary mt-2"
+                                   th:if="${paradero.fechaHoraLlegada != null}"
+                                   th:text="${#temporals.format(paradero.fechaHoraLlegada, 'HH:mm')}">08:30</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </section>
+</div>
+</body>
+</html>

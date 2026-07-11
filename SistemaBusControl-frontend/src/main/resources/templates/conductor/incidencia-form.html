@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{compartido/layout :: master(~{::#pagina-contenido}, ~{::title})}">
+<head>
+    <title>Sistema Bus Control - Reportar incidencia</title>
+</head>
+<body>
+<div id="pagina-contenido" class="page-shell">
+    <p class="page-eyebrow small fw-bold text-uppercase mb-2">Seguridad operativa</p>
+    <h1 class="h3 fw-bold mb-1">Reportar incidencia</h1>
+    <p class="text-secondary mb-4">Describe claramente lo ocurrido durante el recorrido.</p>
+
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    <div th:if="${recorridoActivo == null}" class="empty-state p-5 text-center">
+        <i class="bi bi-info-circle fs-2 text-primary"></i>
+        <h2 class="h5 fw-bold mt-3">No hay recorrido activo</h2>
+        <p class="text-secondary mb-3">No hay recorrido activo. Debes iniciar un recorrido antes de reportar una incidencia.</p>
+        <a class="btn btn-primary" th:href="@{/conductor/recorrido}">Ir a recorrido</a>
+    </div>
+
+    <form th:if="${recorridoActivo != null}" th:action="@{/conductor/incidencias}" th:object="${incidenciaForm}" method="post" class="card-soft p-4 p-md-5">
+        <input type="hidden" th:field="*{recorridoID}">
+        <div class="alert alert-light border mb-4">
+            <strong>Recorrido activo:</strong> #<span th:text="${recorridoActivo.id}">1</span> ·
+            Inicio <span th:text="${recorridoActivo.horaInicio}">08:00</span>
+        </div>
+        <div class="mb-4">
+            <label for="descripcion" class="form-label fw-semibold">Descripción</label>
+            <textarea id="descripcion"
+                      class="form-control"
+                      rows="6"
+                      th:field="*{descripcion}"
+                      maxlength="250"
+                      placeholder="Ej.: ruido inusual en el motor, congestión severa, incidente con pasajero..."
+                      required></textarea>
+            <div class="form-text">Máximo 250 caracteres.</div>
+        </div>
+        <div class="d-flex justify-content-end gap-2">
+            <a class="btn btn-light border" th:href="@{/conductor/dashboard}">Cancelar</a>
+            <button class="btn btn-danger fw-semibold" type="submit">
+                <i class="bi bi-send me-1"></i> Enviar aviso
+            </button>
+        </div>
+    </form>
+</div>
+</body>
+</html>
