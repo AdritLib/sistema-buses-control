@@ -72,6 +72,7 @@ public class GlobalExceptionHandler {
     private ProblemDetail problemDetail(Exception excepcion, HttpStatus status, String titulo, String mensaje) {
     	ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(status, mensaje);
     	problemDetail.setTitle(titulo);
+    	excepcion.printStackTrace();
     	return problemDetail;
     }
     private ProblemDetail problemDetail(Exception excepcion) {

@@ -66,27 +66,10 @@ public class AsignacionServiceImpl implements AsignacionService {
 		if(asignacionID == null) {
 			accion = RegistroAccion.INSERTAR;
 		}else {
-			if(asignacionRepository.existsById(asignacionID)){
-				entidad.setId(asignacionID);
-			}else {
-				throw new AsignacionNoEncontradoException(asignacionID);
-			}
+			if(!asignacionRepository.existsById(asignacionID)) throw new AsignacionNoEncontradoException(asignacionID);
+			entidad.setId(asignacionID);
 			accion = RegistroAccion.ACTUALIZAR;
 		}
-		/*
-		Usuario conductor = usuarioRepository.findById(request.getConductorID()).orElseThrow(UsuarioNoEncontradoException::new);
-		entidad.setConductor(conductor);
-
-		Ruta ruta = rutaRepository.findById(request.getRutaID()).orElseThrow();
-		entidad.setRuta(ruta);
-		
-		Vehiculo vehiculo = vehiculoRepository.findById(request.getVehiculoID()).orElseThrow(VehiculoNoEncontradoException::new);
-		entidad.setVehiculo(vehiculo);
-		
-		entidad.setFecha(request.getFecha());
-		entidad.setHoraInicio(request.getHoraInicio());
-		entidad.setHoraFin(request.getHoraFin());
-		entidad.setEstado(request.getEstado());*/
 		
 		Asignacion guardado = asignacionRepository.save(entidad);
 		producer.enviar(accion, nombreEntidad);

@@ -6,4 +6,8 @@ public class IncidenciaNoEncontradoException extends ErrorDeNegocioException {
     public IncidenciaNoEncontradoException() {
         super("Incidencia no encontrada");
     }
+    
+    public IncidenciaNoEncontradoException(Long id) {
+        super("Incidencia no encontrada con ID: "+id);
+    }
 }

@@ -49,12 +49,12 @@ public class UsuarioServiceImpl implements UsuarioService {
     
 	@Override
     public List<UsuarioResponse> listarConductores(int pagina, int tamanio) {
-        return usuarioRepository.listarConductores(PageRequest.of(pagina, tamanio, Sort.by("id"))).toList();
+        return usuarioRepository.listarPorRol(PageRequest.of(pagina, tamanio, Sort.by("id")), Roles.CONDUCTOR).toList();
     }
 	
 	@Override
 	public List<UsuarioResponse> listarSupervisores(int pagina, int tamanio) {
-		return usuarioRepository.listarSupervisores(PageRequest.of(pagina, tamanio, Sort.by("id"))).toList();
+		return usuarioRepository.listarPorRol(PageRequest.of(pagina, tamanio, Sort.by("id")), Roles.SUPERVISOR).toList();
 	}
     
 	@Override
@@ -107,7 +107,6 @@ public class UsuarioServiceImpl implements UsuarioService {
 	public Usuario buscarPorIdYRol(Long id, Roles rol) {
 		if(!usuarioRepository.existsByIdAndRolNombre(id, rol)) throw new ErrorDeNegocioException("El usuario ID="+id+" no tiene el rol: "+rol.toString());
 		Usuario encontrado = buscarPorId(id);
-		System.out.println("Si funciona buscar Por Id desde Service");
 		return encontrado;
 	}
 }

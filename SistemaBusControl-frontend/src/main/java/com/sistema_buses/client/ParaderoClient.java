@@ -24,5 +24,5 @@ public interface ParaderoClient {
     ParaderoResponse actualizarParadero(@PathVariable Long id, @RequestBody ParaderoRequest request);
 
     @DeleteMapping("/paradero/{id}")
-    void eliminarParadero(@RequestHeader("Authorization") String token, @PathVariable("id") Long id);
+    void eliminarParadero(@PathVariable Long id);
 }

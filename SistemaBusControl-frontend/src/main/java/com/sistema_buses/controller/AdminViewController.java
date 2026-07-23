@@ -282,12 +282,9 @@ public class AdminViewController {
     public String listarParaderos(@RequestParam(defaultValue = "0") int pagina, 
                                   @RequestParam(required = false) Long idBuscado,
                                   HttpSession session, Model model) {
-        String token = (String) session.getAttribute("token");
-        if (token == null || !"ADMIN".equals(session.getAttribute("rol"))) return "redirect:/login";
 
         try {
-            //String cabeceraAuth = "Bearer " + token;
-            List<ParaderoResponse> lista = new java.util.ArrayList<>();
+            List<ParaderoResponse> lista = new ArrayList<>();
             
             if (idBuscado != null) {
                 try {
@@ -314,7 +311,6 @@ public class AdminViewController {
 
     @GetMapping("/paraderos/nuevo")
     public String formularioParadero(HttpSession session, Model model) {
-        if (session.getAttribute("token") == null) return "redirect:/login";
         ParaderoRequest nuevo = new ParaderoRequest();
         nuevo.setEstado("ACTIVO");
         model.addAttribute("paraderoForm", nuevo);
@@ -325,12 +321,10 @@ public class AdminViewController {
 
     @PostMapping("/paraderos/guardar")
     public String guardarParadero(@ModelAttribute("paraderoForm") ParaderoRequest request, HttpSession session) {
-        String token = (String) session.getAttribute("token");
-        if (token == null) return "redirect:/login";
         try {
             if (request.getEstado() == null || request.getEstado().isEmpty()) request.setEstado("ACTIVO");
             if (request.getReferencia() == null || request.getReferencia().isEmpty()) request.setReferencia("-");
-            paraderoClient.registrarParadero(request); //("Bearer " + token, request);
+            paraderoClient.registrarParadero(request);
             return "redirect:/admin/paraderos?exito=true";
         } catch (Exception e) {
             return "redirect:/admin/paraderos?error=true";
@@ -338,11 +332,9 @@ public class AdminViewController {
     }
 
     @GetMapping("/paraderos/editar/{id}")
-    public String editarParadero(@PathVariable("id") Long id, HttpSession session, Model model) {
-        String token = (String) session.getAttribute("token");
-        if (token == null || !"ADMIN".equals(session.getAttribute("rol"))) return "redirect:/login";
+    public String editarParadero(@PathVariable Long id, HttpSession session, Model model) {
         try {
-            ParaderoResponse paradero = paraderoClient.obtenerParaderoPorId(id); //("Bearer " + token, id);
+            ParaderoResponse paradero = paraderoClient.obtenerParaderoPorId(id);
             ParaderoRequest form = new ParaderoRequest();
             form.setNombre(paradero.getNombre());
             form.setDireccion(paradero.getDireccion());
@@ -367,9 +359,10 @@ public class AdminViewController {
     }
 
     @PostMapping("/paraderos/actualizar/{id}")
-    public String actualizarParadero(@PathVariable("id") Long id, @ModelAttribute("paraderoForm") ParaderoRequest request, HttpSession session) {
-        String token = (String) session.getAttribute("token");
-        if (token == null) return "redirect:/login";
+    public String actualizarParadero(
+    		@PathVariable Long id,
+    		@ModelAttribute("paraderoForm") ParaderoRequest request, 
+    		HttpSession session) {
         try {
             if (request.getReferencia() == null || request.getReferencia().isEmpty()) request.setReferencia("-");
             paraderoClient.actualizarParadero(id, request); //("Bearer " + token, id, request);
@@ -380,11 +373,9 @@ public class AdminViewController {
     }
 
     @GetMapping("/paraderos/eliminar/{id}")
-    public String eliminarParadero(@PathVariable("id") Long id, HttpSession session) {
-        String token = (String) session.getAttribute("token");
-        if (token == null) return "redirect:/login";
+    public String eliminarParadero(@PathVariable Long id, HttpSession session) {
         try {
-            paraderoClient.eliminarParadero("Bearer " + token, id);
+            paraderoClient.eliminarParadero(id);
             return "redirect:/admin/paraderos?eliminado=true";
         } catch (Exception e) {
             return "redirect:/admin/paraderos?errorEliminar=true";
@@ -411,7 +402,6 @@ public class AdminViewController {
                 lista = estacionClient.listarEstaciones(pagina, 10);
             }
             
-            System.out.println(lista.toString());
             model.addAttribute("estaciones", lista);
             model.addAttribute("paginaActual", pagina);
             model.addAttribute("menuActivo", "estaciones");
@@ -432,6 +422,8 @@ public class AdminViewController {
         		request.setNombre(estacion.getNombre());
         		request.setUbicacion(estacion.getUbicacion());
         		request.setSupervisorId(estacion.getSupervisorId());
+        		request.setEstado(estacion.getEstado());
+        		model.addAttribute("id", id);
         		modo = "editar";
         	}
             List<UsuarioResponse> supervisores = usuarioClient.listarSupervisores(0, 100);
@@ -450,13 +442,11 @@ public class AdminViewController {
     		@RequestParam(required = false) Long id,
     		@ModelAttribute("estacionForm") EstacionRequest request) {
         try {
-        	System.out.println(id);
-        	/*
         	if(id == null) {
         		estacionClient.registrarEstacion(request);
         	}else {
         		estacionClient.actualizarEstacion(id, request);
-        	}*/
+        	}
             return "redirect:/admin/estaciones?exito=true";
         } catch (Exception e) {
             return "redirect:/admin/estaciones?error=true";
@@ -465,8 +455,6 @@ public class AdminViewController {
 
     @GetMapping("/estaciones/eliminar/{id}")
     public String eliminarEstacion(@PathVariable Long id, HttpSession session) {
-        String token = (String) session.getAttribute("token");
-        if (token == null || !"ADMIN".equals(session.getAttribute("rol"))) return "redirect:/login";
         try {
             estacionClient.eliminarEstacion(id); //("Bearer " + token, id);
             return "redirect:/admin/estaciones?eliminado=true";
@@ -512,10 +500,8 @@ public class AdminViewController {
 	 				rutaParaderoClient.registrar(rutaParadero);
      			});
             }
-            
             return "redirect:/admin/rutas?exito=true";
         } catch (Exception e) {
-        	e.printStackTrace();
             return "redirect:/admin/rutas?error=true";
         }
     }
@@ -555,7 +541,10 @@ public class AdminViewController {
     }
     
     @PostMapping("/rutas/actualizar/{id}")
-    public String actualizarRuta(@PathVariable Long id, @ModelAttribute("rutaForm") RutaRequest request, HttpSession session) {
+    public String actualizarRuta(
+    		@PathVariable Long id, 
+    		@ModelAttribute("rutaForm") RutaRequest request, 
+    		HttpSession session) {
         try {
             rutaClient.actualizar(id, request);
             return "redirect:/admin/rutas?exito=true";
@@ -569,13 +558,13 @@ public class AdminViewController {
     // ==========================================
     
     @GetMapping("/registros")
-    public String listarRegistros(@RequestParam(defaultValue = "0") int pagina, HttpSession session, Model model) {
+    public String listarRegistros(
+    		@RequestParam(defaultValue = "0") int pagina, HttpSession session, Model model) {
         try {
             List<RegistroResponse> registros = registroClient.listar(pagina, 10);
             model.addAttribute("registros", registros);
             model.addAttribute("menuActivo", "registros");
             model.addAttribute("paginaActual", pagina);
-            model.addAttribute("nombreUsuario", session.getAttribute("nombreUsuario"));
             return "admin/registros-lista";
         } catch (Exception e) {
         	e.printStackTrace();

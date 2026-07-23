@@ -9,11 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.sistema_buses.dto.EstacionRequest;
 import com.sistema_buses.dto.EstacionResponse;
 import com.sistema_buses.enums.RegistroAccion;
-import com.sistema_buses.enums.Roles;
 import com.sistema_buses.exception.EstacionNoEncontradoException;
 import com.sistema_buses.mapper.EstacionMapper;
 import com.sistema_buses.model.Estacion;
-import com.sistema_buses.model.Usuario;
 import com.sistema_buses.repository.EstacionRepository;
 import com.sistema_buses.service.EstacionService;
 import com.sistema_buses.service.rabbitmq.RabbitProducer;
@@ -28,7 +26,6 @@ public class EstacionServiceImpl implements EstacionService {
 	private final RabbitProducer producer;
 	private final String nombreEntidad = "Estacion";
 	private final EstacionMapper estacionMapper;
-	private final UsuarioServiceImpl usuarioServiceImpl;
 	
 	@Override
 	public List<EstacionResponse> listar(int pagina, int size) {
@@ -54,27 +51,12 @@ public class EstacionServiceImpl implements EstacionService {
 	
 	@Transactional
 	private EstacionResponse guardar(Long id, EstacionRequest request) {
-		Estacion entidad;
-		RegistroAccion accion;
-		if(id == null) {
-			entidad = new Estacion();
-			accion = RegistroAccion.INSERTAR;
-		}else {
-			entidad = estacionRepository.findById(id).orElseThrow(() -> new EstacionNoEncontradoException(id));
+		Estacion entidad = estacionMapper.toEntity(request);
+		RegistroAccion accion = RegistroAccion.INSERTAR;
+		if(id != null) {
+			if(!estacionRepository.existsById(id)) throw new EstacionNoEncontradoException(id);
+			entidad.setId(id);
 			accion = RegistroAccion.ACTUALIZAR;
-		}
-		
-		entidad.setNombre(request.getNombre());
-		entidad.setUbicacion(request.getUbicacion());
-		entidad.setEstado(request.getEstado());
-		
-		Long supervisorId = request.getSupervisorId();
-		
-		if(supervisorId != null) {
-			Usuario supervisor = usuarioServiceImpl.buscarPorIdYRol(supervisorId, Roles.SUPERVISOR);
-			entidad.setSupervisor(supervisor);
-		}else {
-			entidad.setSupervisor(null);
 		}
 		
 		Estacion guardado = estacionRepository.save(entidad);

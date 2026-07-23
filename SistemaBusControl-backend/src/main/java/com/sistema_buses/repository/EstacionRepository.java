@@ -24,7 +24,7 @@ public interface EstacionRepository extends JpaRepository<Estacion, Long>{
 					s.id, 
 					s.nombre,
 					e.estado) 
-			FROM Estacion e INNER JOIN e.supervisor s
+			FROM Estacion e LEFT JOIN e.supervisor s
 			""",
 			countQuery = "SELECT count(r) FROM Estacion r")
 	Page<EstacionResponse> listar(Pageable page);
@@ -37,7 +37,7 @@ public interface EstacionRepository extends JpaRepository<Estacion, Long>{
 					s.id, 
 					s.nombre,
 					e.estado) 
-			FROM Estacion e INNER JOIN e.supervisor s WHERE e.id = :estacionId
+			FROM Estacion e LEFT JOIN e.supervisor s WHERE e.id = :estacionId
 			""")
 	Optional<EstacionResponse> encontrarPorID(Long estacionId);
 	

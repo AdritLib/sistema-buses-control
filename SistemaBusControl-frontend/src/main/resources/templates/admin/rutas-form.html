@@ -54,7 +54,7 @@
 					<div class="mb-5">
                         <label class="form-label fw-semibold text-secondary">Paraderos</label>
                         <select id="selector" class="form-select bg-light" onchange="agregarALista()"> 
-                            <option value="" disabled selected>Agregar paradero</option>
+                            <option value="" disabled selected>-- Agregar paradero --</option>
                             <option th:each="e : ${paraderos}" th:value="${e.id}" th:text="${e.nombre}"></option>
                         </select>
 						

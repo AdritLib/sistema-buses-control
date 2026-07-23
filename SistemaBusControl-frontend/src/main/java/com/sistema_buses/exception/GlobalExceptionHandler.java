@@ -14,6 +14,7 @@ public class GlobalExceptionHandler {
     	redirect.addFlashAttribute("errorTitulo", "Error al contactar con la aplicación");
     	redirect.addFlashAttribute("errorMensaje", e.contentUTF8());
     	redirect.addFlashAttribute("errorCode", e.status());
+    	e.printStackTrace();
         return "redirect:/error";
     }
     
@@ -22,6 +23,7 @@ public class GlobalExceptionHandler {
     	redirect.addFlashAttribute("errorTitulo", e.getProblemDetail().getTitle());
     	redirect.addFlashAttribute("errorMensaje", e.getProblemDetail().getDetail());
     	redirect.addFlashAttribute("errorCode", 500);
+    	e.printStackTrace();
         return "redirect:/error";
     }
 }

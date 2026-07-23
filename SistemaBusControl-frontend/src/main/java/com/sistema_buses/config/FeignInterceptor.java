@@ -1,7 +1,5 @@
 package com.sistema_buses.config;
 
-import java.util.logging.Logger;
-
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -11,8 +9,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 
 public class FeignInterceptor implements RequestInterceptor{
-	private final Logger logger = Logger.getLogger(FeignInterceptor.class.getName());
-	
 	@Override
 	public void apply(RequestTemplate template) {
 		ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
@@ -39,7 +35,6 @@ public class FeignInterceptor implements RequestInterceptor{
             if (expiresAtStr != null) {
                 cookieHeader.append("; expires-in=").append(expiresAtStr);
             }
-            logger.info(token.substring(token.length() - 10, token.length()));
             
             template.header("Cookie", cookieHeader.toString());
         }

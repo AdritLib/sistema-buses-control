@@ -13,21 +13,21 @@
         <div class="card border-0 shadow-sm rounded-4 col-lg-8">
             <div class="card-body p-4 p-md-5">
                 <form th:action="@{/admin/estaciones/guardar}" th:object="${estacionForm}" method="post">
-					<input type="hidden" th:name="id" th:value="${id}">
+					<input type="hidden" name="id" th:value="${id}">
 					
                     <div class="mb-4">
-                        <label class="form-label fw-semibold text-secondary">Nombre de la Estación</label>
-                        <input type="text" class="form-control form-control-lg bg-light" th:field="*{nombre}" placeholder="Ej: Terminal Sur" required>
+                        <label for="nombre" class="form-label fw-semibold text-secondary">Nombre de la Estación</label>
+                        <input type="text" id="nombre" class="form-control form-control-lg bg-light" th:field="*{nombre}" placeholder="Ej: Terminal Sur" required>
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label fw-semibold text-secondary">Dirección / Ubicación Física</label>
-                        <input type="text" class="form-control bg-light" th:field="*{ubicacion}" required>
+                        <label for="ubicacion" class="form-label fw-semibold text-secondary">Dirección / Ubicación Física</label>
+                        <input type="text" id="ubicacion" class="form-control bg-light" th:field="*{ubicacion}" required>
                     </div>
 
-                    <div class="mb-5">
-                        <label class="form-label fw-semibold text-secondary">Supervisor Asignado (Opcional)</label>
-                        <select class="form-select bg-light" th:field="*{supervisorId}">
+                    <div class="mb-4">
+                        <label for="supervisor" class="form-label fw-semibold text-secondary">Supervisor Asignado (Opcional)</label>
+                        <select id="supervisor" class="form-select bg-light" th:field="*{supervisorId}">
                             <option th:value="${null}">-- Sin asignar --</option>
                             <option th:each="sup : ${supervisores}" th:value="${sup.id}" th:text="${sup.nombre}">-</option>
                         </select>
@@ -35,11 +35,11 @@
                     </div>
 					
 					<input th:if="${modo == 'crear'}" type="hidden" th:field="*{estado}" th:value="'ACTIVO'"/>
-					<div th:if="${modo == 'editar'}" class="mb-3">
-						<label class="form-label">Estado</label>
-						<select class="form-select" th:field="*{estado}" required>
-							<option value="">Seleccione</option>
-							<option selected value="ACTIVO">ACTIVO</option>
+					<div th:if="${modo == 'editar'}" class="mb-5">
+						<label for="estado" class="form-label">Estado</label>
+						<select id="estado" class="form-select" th:field="*{estado}" required>
+							<option value="null">Seleccione</option>
+							<option value="ACTIVO">ACTIVO</option>
 							<option value="INACTIVO">INACTIVO</option>
 						</select>
 					</div>

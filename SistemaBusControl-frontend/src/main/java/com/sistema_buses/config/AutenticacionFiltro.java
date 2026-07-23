@@ -19,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class AutenticacionFiltro extends OncePerRequestFilter{
-	
 	private static final List<String> RUTAS_PUBLICAS = List.of(
         "/css/", "/js/", "/images/", "/login", "/cambiarClave", "/logout", "/cargarDashboard"
     );

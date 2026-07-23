@@ -85,7 +85,9 @@ public class IncidenciaServiceImpl implements IncidenciaService {
 		RegistroAccion accion = RegistroAccion.INSERTAR;
 		
 		if(incidenciaID != null) {
+			if(!incidenciaRepository.existsById(incidenciaID)) throw new IncidenciaNoEncontradoException(incidenciaID);
 			accion = RegistroAccion.ACTUALIZAR;
+			entidad.setId(incidenciaID);
 		}
 		
 		Incidencia guardado = incidenciaRepository.save(entidad);
